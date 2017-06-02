@@ -50,25 +50,27 @@
             </div>
     
             <div class="initContainer">
-                <div class="left">
+                <!-- <div class="left">
                     <textarea spellcheck="false" id="textarealeft" placeholder="Enter JSON to compare, enter an URL to JSON"></textarea>
                     <pre id="errorLeft" class="error"></pre>
                     <span class="fileInput">or <input type="file" id="fileLeft" onchange="jdd.handleFiles(this.files, 'left')"></span>
+                </div> -->
+                <div>
+                    <label>cto</label>
+                    <input type="text" name="cto-code" id="cto-code">
+                    <label>env</label>
+                    <input type="text" name="env" id="env">
                 </div>
     
                 <div class="center">
                     <button id="compare">Compare</button>
-                    <div class="throbber-loader"></div>
-                    <br/><br/><br/><br/>
-                    or try some <a href="#" id="sample">sample data</a>
-
                 </div>
     
-                <div class="right">
+                <!-- <div class="right">
                     <textarea spellcheck="false" class="right" id="textarearight" placeholder="Enter JSON to compare, enter an URL to JSON"></textarea>
                     <pre id="errorRight" class="error"></pre>
                     <span class="fileInput">or <input type="file" id="fileRight" onchange="jdd.handleFiles(this.files, 'right')"></span>
-                </div>
+                </div> -->
             </div>
     
             <div class="diffcontainer">

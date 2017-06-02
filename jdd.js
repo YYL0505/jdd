@@ -113,7 +113,7 @@ var jdd = {
      * types and actual values.
      */
     diffVal: function(val1, config1, val2, config2) { 
-
+        var length = jdd.diffs.length;
         if (_.isArray(val1)) {
             jdd.diffArray(val1, config1, val2, config2);
         } else if (_.isObject(val1)) {
@@ -122,6 +122,7 @@ var jdd = {
                                                 config2, jdd.generatePath(config2),
                                                 'Both types should be objects', jdd.TYPE));
             } else {
+                var length = jdd.diffs.length;
                 jdd.findDiffs(config1, val1, config2, val2);
             }
         } else if (_.isString(val1)) {
@@ -151,6 +152,7 @@ var jdd = {
                                             config2, jdd.generatePath(config2),
                                            'Both types should be nulls', jdd.TYPE));
         }
+        return length === jdd.diffs.length;
     },
 
     /**
@@ -188,13 +190,43 @@ var jdd = {
                     /*
                      * If both sides are arrays then we want to diff them.
                      */
-                    jdd.diffVal(val1[index], config1, val2[index], config2);
+                    // jdd.diffVal(val1[index], config1, val2[index], config2);
+                    jdd.arrayEqual(val1, val2);
                 }
                 config1.currentPath.pop();
                 config2.currentPath.pop();
             }
         });
     },
+
+
+    arrayEqual: function(a, config1, b, config2) {
+    if (a.length !== b.length)
+    {
+        return false;
+    }
+
+    var i = a.length;
+
+    while (i--)
+    {
+        var j = b.length;
+        var found = false;
+
+        while (!found && j--)
+        {
+            if(jdd.diffVal(val1[i], config1, val2[j], config2)) found = true;
+        }
+
+        if (!found)
+        {
+            return false;
+        }
+    }
+
+    return true;
+},
+
 
     /**
      * We handle boolean values specially because we can show a nicer message for them.
@@ -931,20 +963,69 @@ var jdd = {
             }
         };
 
-        if (loadUrl('textarealeft', 'errorLeft')) {
-            return;
-        }
+        // if (loadUrl('textarealeft', 'errorLeft')) {
+        //     return;
+        // }
 
-        if (loadUrl('textarearight', 'errorRight')) {
-            return;
-        }
+        // if (loadUrl('textarearight', 'errorRight')) {
+        //     return;
+        // }
 
         /*
          * We'll start by running the text through JSONlint since it gives
          * much better error messages.
          */
+
+
          var leftValid = jdd.validateInput($('#textarealeft').val(), jdd.LEFT);
          var rightValid = jdd.validateInput($('#textarearight').val(), jdd.RIGHT);
+           
+
+        //to-do:get rule from mongo 
+        $.get('http://10.38.87.135:12110/rule-publisher/api/ctoRule/'+$('#cto-code').val()+'/'+$('#env').val()).
+        // $.get('http://localhost:8080/rule-publisher/api/ctoRule/7X18CTO1WW/simulation').
+            success(function(data, status, headers, config) {
+                console.log(data);
+            }).
+            error(function(data, status, headers, config) {
+                // called asynchronously if an error occurs
+                // or server returns response with an error status.
+            });
+
+        //to-do:get rule from rule service
+        $.get('http://10.38.87.95:11210/configuration_rules/'+$('#cto-code').val()).
+        // $.get('http://localhost:8080/rule-publisher/api/ctoRule/7X18CTO1WW/simulation').
+            success(function(data, status, headers, config) {
+                console.log(data);
+            }).
+            error(function(data, status, headers, config) {
+                // called asynchronously if an error occurs
+                // or server returns response with an error status.
+            });
+        //to-do:get character from rule service
+        $.get('http://10.38.87.95:11210/configuration_rules/'+$('#cto-code').val() + '/character').
+        // $.get('http://localhost:8080/rule-publisher/api/ctoRule/7X18CTO1WW/simulation').
+            success(function(data, status, headers, config) {
+                console.log(data);
+            }).
+            error(function(data, status, headers, config) {
+                // called asynchronously if an error occurs
+                // or server returns response with an error status.
+            });
+        //to-do:get group from rule service
+        $.get('http://10.38.87.95:11210/configuration_rules/'+$('#cto-code').val() + '/groups').
+        // $.get('http://localhost:8080/rule-publisher/api/ctoRule/7X18CTO1WW/simulation').
+            success(function(data, status, headers, config) {
+                console.log(data);
+            }).
+            error(function(data, status, headers, config) {
+                // called asynchronously if an error occurs
+                // or server returns response with an error status.
+            });
+        //to-do 
+        //1.merge data from rule service
+        //2.remove some field
+        //3.compare.
 
         if (!leftValid || !rightValid) {
             $('body').removeClass('progress');
@@ -1040,12 +1121,6 @@ jQuery(document).ready(function() {
     if (jdd.getParameterByName('left') && jdd.getParameterByName('right')) {
         jdd.compare();
     }
-
-
-    $('#sample').click(function(e) {
-        e.preventDefault();
-        jdd.loadSampleData();
-    });
 
     $(document).keydown(function(event) {
         if (event.keyCode === 78 || event.keyCode === 39) {
